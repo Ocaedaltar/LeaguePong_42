@@ -1,0 +1,7 @@
+.env
+.env.test
+.env.test.swp
+*.swp
+
+# OS
+.DS_Store
