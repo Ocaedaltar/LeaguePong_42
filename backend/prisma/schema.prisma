@@ -1,0 +1,225 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+
+    id Int @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    login String @unique
+    username String? @unique
+   	email String? @unique
+    
+	status Int @default(4)
+
+	twoFactorAuth Boolean @default(false)
+
+
+	whoIWatch Relation[] @relation("r1")
+	whoWatchesMe Relation[] @relation("r2")
+
+	player1 Game[] @relation("p1")
+	player2 Game[] @relation("p2")
+	
+	achievements Achievement[]
+
+	discussion1 Discussion[] @relation("discussion1")
+	discussion2 Discussion[] @relation("discussion2")
+	discussionMsgs DiscussionMessage[] //@relation("discussionMsgs")
+
+	channelUsers	ChannelUser[]
+	channelBans		ChannelBan[]
+	channelMutes	ChannelMute[]
+	channelMessages	ChannelMessage[]
+
+	avatar Avatar? @relation(fields: [avatarUrl], references: [url])
+	avatarUrl String?
+
+	ranking Int
+
+    @@map("user")
+}
+
+model Achievement{
+	id Int @id @default(autoincrement())
+
+	title String @unique
+	descriptions String?
+
+	users User [] 
+
+	path String
+
+	@@map("achievement")
+}
+
+model Avatar {
+	id Int @id @default(autoincrement())
+	
+
+	url String @unique
+	is_public Boolean
+	public_id String?
+
+
+	owner User []
+
+	@@map("avatar")
+}
+
+model Discussion {
+	id			Int @id @default(autoincrement())
+	createdAt	DateTime @default(now())
+    updatedAt	DateTime @updatedAt
+	user1Id		Int
+	user2Id		Int 
+	user1		User @relation(name: "discussion1", fields: [user1Id], references: [id], onDelete: Cascade)
+	user2		User @relation(name: "discussion2", fields: [user2Id], references: [id], onDelete: Cascade)
+	
+	messages	DiscussionMessage[]
+
+	@@map("discussion")
+	@@unique([user1Id, user2Id])
+}
+
+model DiscussionMessage {
+	// @@id([discussionId, userId])
+	id				Int @id @default(autoincrement())
+
+	createdAt		DateTime	@default(now())
+	text			String
+
+	userId			Int
+ 	discussionId	Int
+
+	user			User		@relation(fields: [userId], references: [id], onDelete: Cascade)
+	discussion		Discussion	@relation(fields: [discussionId], references: [id], onDelete: Cascade)
+
+	@@map("discussionMessage")
+}
+
+model Channel {
+	id				Int @id @default(autoincrement())
+
+	createdAt		DateTime @default(now())
+	updatedAt		DateTime @updatedAt
+
+	name			String	 @unique
+	type			Int
+	hash			String?
+ 
+	users		ChannelUser[]
+	bans		ChannelBan[]
+	mutes		ChannelMute[]
+	messages	ChannelMessage[]
+
+	@@map("channel")
+	// @@unique([name, private])
+}
+
+model ChannelUser {
+	@@id([chanId, userId])
+
+	createdAt		DateTime @default(now())
+	updatedAt		DateTime @updatedAt
+
+	// status			Int
+	role			Int
+	userId			Int
+	chanId		Int
+	// statusTime		DateTime?
+
+	user			User	@relation(fields: [userId], references: [id], onDelete: Cascade)
+	channel			Channel	@relation(fields: [chanId], references: [id], onDelete: Cascade)
+
+	@@map("channelUser")
+}
+
+model ChannelBan {
+	@@id([chanId, userId])
+
+	createdAt		DateTime @default(now())
+	updatedAt		DateTime @updatedAt
+
+	userId			Int
+	chanId		Int
+
+	user			User	@relation(fields: [userId], references: [id], onDelete: Cascade)
+	channel			Channel	@relation(fields: [chanId], references: [id], onDelete: Cascade)
+
+	@@map("channelBan")
+}
+
+model ChannelMute {
+	@@id([chanId, userId])
+
+	createdAt		DateTime @default(now())
+	updatedAt		DateTime @updatedAt
+
+	userId			Int
+	chanId		Int
+	muteExpires		DateTime
+
+	user			User	@relation(fields: [userId], references: [id], onDelete: Cascade)
+	channel			Channel	@relation(fields: [chanId], references: [id], onDelete: Cascade)
+
+	@@map("channelMute")
+}
+
+model ChannelMessage {
+	
+	id			Int	@id	@default(autoincrement())
+    createAt	DateTime @default(now())
+
+	chanId	Int
+	userId		Int
+	
+	user		User	@relation(fields: [userId], references: [id], onDelete: Cascade)
+	channnel	Channel	@relation(fields: [chanId], references: [id], onDelete: Cascade)
+
+	text		String
+
+	@@map("channelMessage")
+}
+
+
+
+model Relation {
+	id Int @id @default(autoincrement())
+
+	me User @relation("r1",fields: [userId], references: [id], onDelete: Cascade)
+	userId Int
+
+	userIWatch User @relation("r2",fields: [userIWatchId], references: [id], onDelete: Cascade)
+	userIWatchId Int
+
+	relation Int // 0 NONE/ 1 friend 
+	isBlock Int @default(0)
+
+	@@map("relation")
+}
+
+model Game {
+	id Int @id @default(autoincrement())
+    createAt DateTime @default(now())
+
+	player1 User @relation("p1", fields: [player1Id], references: [id])
+	player1Id Int
+	score1 Int
+
+	player2 User @relation("p2", fields: [player2Id], references: [id])
+	player2Id Int
+	score2 Int
+
+	@@map("game")
+}

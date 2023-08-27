@@ -1,0 +1,61 @@
+.achiv-body {
+	height: 100%;
+	overflow-y: scroll;
+}
+
+.all_achiev {
+	display: flex;
+	flex-wrap: wrap;
+	margin-top: 100px;
+}
+
+.unlocked_achiev {
+	justify-content: center;
+	display: flex;
+	list-style: none;
+	background-color: #020912;
+	width: 300px;
+	border: 2px solid #785a28;
+	;
+	border-radius: 10%;
+	margin: 20px;
+	height: 100px;
+}
+
+.unlocked_achiev h3 {
+	margin-top: 10px;
+	color: green;
+}
+
+#icon_unlocked {
+	margin-right: 10px;
+}
+
+#icon_locked {
+	margin-right: 10px;
+}
+
+.achiev_describe {
+	margin-top: 20px;
+	display: flex;
+	justify-content: center;
+	font-style: italic;
+	align-items: center;
+}
+
+.locked_achiev h3 {
+	margin-top: 10px;
+}
+
+.locked_achiev {
+	color: gray;
+	justify-content: center;
+	display: flex;
+	list-style: none;
+	background-color: #020912;
+	width: 300px;
+	border: 2px solid gray;
+	border-radius: 10%;
+	margin: 20px;
+	height: 100px;
+}

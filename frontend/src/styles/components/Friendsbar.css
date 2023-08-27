@@ -1,0 +1,20 @@
+.Friendsbar {
+	/* POSITION */
+	position: absolute;
+	bottom: 0;
+	right: 0;
+
+	/* SIZE */
+	width: 220px;
+	height: calc(100vh - 85px);
+
+	/* BOXING */
+	background-color: #020912;
+	color: #fff;
+	border-left: 3px solid #16222a;
+	border-bottom: 1px solid #16222a;
+
+	/* SPACING */
+	display: grid;
+	grid-template-rows: 35px auto 37px;
+}
